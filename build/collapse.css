@@ -1,0 +1,78 @@
+.colcon {
+    position: relative;
+    display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 1;
+	border: 1px solid #ccc;
+}
+
+.colcon-content {
+    position: relative;
+    display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	flex-shrink: 1;
+	padding: 1rem;
+}
+
+.colcon-expander {
+    position: relative;
+    display: flex;
+	flex-direction: column;
+	flex-grow: 0;
+	flex-shrink: 0;
+	border-left: 1px solid blue;
+	padding: 1rem;
+	flex-basis: 0;
+	transition: flex-basis 0.3s;
+}
+
+
+
+.colcon-expander-buttonrow {
+	display: flex;
+	flex-direction: row;
+}
+
+.colcon-expander-buttoncol {
+	display: flex;
+	flex-direction: column;
+}
+
+.colcon-expander-button {
+	padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
+    display: flex;
+	flex-grow:0;
+	flex-shrink: 0;
+	margin:auto auto auto 0;
+}
+
+.colcon-expander-button-icon {
+	top: 0 !important;
+    margin: auto;
+}
+
+.colcon-expander-buttonrow .colcon-expander-button {
+	margin-right: 1rem;
+}
+
+.colcon-expander-buttonrow .colcon-expander-button:last-of-type {
+	margin-right: 0;
+}
+
+.colcon-expander-buttoncol .colcon-expander-button {
+	margin-bottom: 1rem;
+}
+
+.colcon-expander-buttoncol .colcon-expander-button:last-of-type {
+	margin-bottom: 0;
+}
+
+
+
+
+
+
