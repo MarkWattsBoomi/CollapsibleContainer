@@ -41,8 +41,19 @@ export default class Collapse extends React.Component<any,any> {
         this.setState({selectedExpander: undefined});
     }
 
-    buttonClicked(containerId: string){
+    async buttonClicked(containerId: string){
+        const outcomes: Map<string,any> = new Map();
+        let trigger: boolean = this.state.selectedExpander === undefined;
         this.setState({selectedExpander: containerId});
+        if(trigger) {
+            manywho.model.getOutcomes(this.expanderParentId, this.props.flowKey).forEach((outcome: any)=>{
+                outcomes.set(outcome.developerName, outcome);
+            });
+            
+            if(outcomes.has("onExpand")){
+                await manywho.component.onOutcome(outcomes.get("onExpand"),null,this.props.flowKey);
+            }
+        }
     }
 
     render() {
@@ -68,7 +79,7 @@ export default class Collapse extends React.Component<any,any> {
                 }
             }
             else {
-               content.push(this.buildStandardContent(kid, this.props.flowKey)); 
+               content.push(this.buildStandardContent(kid, this.props.flowKey, false)); 
             }
         });
         
@@ -88,17 +99,20 @@ export default class Collapse extends React.Component<any,any> {
         );
     }
 
-    buildStandardContent(item: any, flowKey: string) {
+    buildStandardContent(item: any, flowKey: string, includeOutcomes: boolean = true) {
         let content: any;
         const Outcome : any = manywho.component.getByName("outcome");
         let label = null;
         if (item.label) {
             label = <h3>{item.label}</h3>;
         }
-        const outcomes = manywho.model.getOutcomes(item.id, this.props.flowKey);
-        const outcomeButtons = outcomes && outcomes.map((outcome: any) => {
-            return <Outcome id={outcome.id} flowKey={this.props.flowKey} />;
-        });
+        let outcomeButtons: any;
+        if(includeOutcomes) {
+            const outcomes = manywho.model.getOutcomes(item.id, this.props.flowKey);
+            outcomeButtons = outcomes && outcomes.map((outcome: any) => {
+                return <Outcome id={outcome.id} flowKey={this.props.flowKey} />;
+            });
+        }
         if(manywho.model.isContainer(item)) {
             
             const Component = manywho.component.getByName("mw-" + item.containerType);
@@ -120,7 +134,7 @@ export default class Collapse extends React.Component<any,any> {
                 <div className={className} id={this.props.id}>
                     {label}
                     {cpt}
-                    {outcomeButtons}
+                    {outcomeButtons} 
                 </div>
             );
         }
