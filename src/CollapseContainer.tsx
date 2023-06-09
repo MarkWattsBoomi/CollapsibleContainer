@@ -253,35 +253,6 @@ export default class Collapse extends React.Component<any,any> {
                     </span>
                 );
                 tabs.push(tab);
-                /*
-                if(kid.attributes?.icon) {
-                    button=(
-                        <span
-                            className={"colcon-expander-button-icon glyphicon glyphicon-" + kid.attributes?.icon}
-                        />
-                    );
-                }
-                else {
-                    button=(
-                        <span
-                            className={"colcon-expander-button-icon"}
-                        >
-                            {kid.developerName}
-                        </span>
-                    );
-                }
-                buttons.push(
-                    <div
-                        id={kid.id}
-                        onClick={(e:any) => {this.buttonClicked(kid.id)}}
-                        title={kid.label || kid.developerName}
-                        className='colcon-expander-button'
-                    >
-                        {button}
-                    </div>
-                    
-                );
-                */
             }
         });
         buttons.unshift(
@@ -326,7 +297,11 @@ export default class Collapse extends React.Component<any,any> {
                     <div
                         className='colcon-expander-content'
                     >
-                        {content}
+                        <div
+                            className='colcon-expander-scroller'
+                        >
+                            {content}
+                        </div>
                     </div>
                 </div>
             </div>
