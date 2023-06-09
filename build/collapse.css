@@ -23,7 +23,7 @@
 	flex-grow: 0;
 	flex-shrink: 0;
 	border-left: 1px solid blue;
-	padding: 1rem;
+	padding: 0;
 	flex-basis: 4rem;
 	transition: flex-basis 0.3s;
 }
@@ -38,21 +38,28 @@
 .colcon-expander-buttoncol {
 	display: flex;
 	flex-direction: column;
+	padding: 1rem;
 }
 
 .colcon-expander-button {
-	padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.3rem;
+	padding: 0.3rem;
+    border: 1px solid transparent;
+    border-radius: 50%;
     display: flex;
 	flex-grow:0;
 	flex-shrink: 0;
 	margin:auto auto auto 0;
+	cursor: pointer;
+}
+
+.colcon-expander-button:hover {
+	color: #1c60f3;
 }
 
 .colcon-expander-button-icon {
 	top: 0 !important;
     margin: auto;
+	font-size: 1.3rem;
 }
 
 .colcon-expander-buttonrow .colcon-expander-button {
@@ -69,6 +76,30 @@
 
 .colcon-expander-buttoncol .colcon-expander-button:last-of-type {
 	margin-bottom: 0;
+}
+
+.colcon-expander-body {
+	padding: 0 1rem 0 1rem;
+}
+
+.colcon-expander-tabs {
+	display: flex;
+	flex-direction: row;
+}
+
+.colcon-expander-tab {
+	padding: 0.5rem 0.5rem 0.2rem 0.5rem;
+    font-size: 0.9rem;
+    color: #111;
+}
+
+.colcon-expander-tab-selected {
+	border-bottom: 3px solid #1c60f3;
+}
+
+.colcon-expander-tab:not(.colcon-expander-tab-selected):hover {
+    color: #1c60f3;
+	cursor: pointer;
 }
 
 

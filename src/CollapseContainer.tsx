@@ -13,6 +13,7 @@ export default class Collapse extends React.Component<any,any> {
     expanderParentId: string;
     expandedWidth: string;
 
+
     constructor(props: any){
         super(props);
         this.moveHappened = this.moveHappened.bind(this);
@@ -99,7 +100,7 @@ export default class Collapse extends React.Component<any,any> {
         );
     }
 
-    buildStandardContent(item: any, flowKey: string, includeOutcomes: boolean = true) {
+    buildStandardContent(item: any, flowKey: string, includeOutcomes: boolean = true, includeTitle: boolean=true) {
         let content: any;
         const Outcome : any = manywho.component.getByName("outcome");
         let label = null;
@@ -132,7 +133,7 @@ export default class Collapse extends React.Component<any,any> {
                         
             content=(
                 <div className={className} id={this.props.id}>
-                    {label}
+                    {includeTitle? label : undefined}
                     {cpt}
                     {outcomeButtons} 
                 </div>
@@ -177,34 +178,36 @@ export default class Collapse extends React.Component<any,any> {
         let buttons: any[] = [];
         let kids: any[] = manywho.model.getChildren(container.id, this.props.flowKey);
         kids.forEach((kid: any) => {
-            let button: any;
-            if(kid.attributes?.icon) {
-                button=(
-                    <span
-                        className={"colcon-expander-button-icon glyphicon glyphicon-" + kid.attributes?.icon}
-                    />
-                );
-            }
-            else {
-                button=(
-                    <span
-                        className={"colcon-expander-button-icon"}
+            if(manywho.model.isContainer(kid)) {
+                let button: any;
+                if(kid.attributes?.icon) {
+                    button=(
+                        <span
+                            className={"colcon-expander-button-icon glyphicon glyphicon-" + kid.attributes?.icon}
+                        />
+                    );
+                }
+                else {
+                    button=(
+                        <span
+                            className={"colcon-expander-button-icon"}
+                        >
+                            {kid.developerName}
+                        </span>
+                    );
+                }
+                buttons.push(
+                    <div
+                        id={kid.id}
+                        className='colcon-expander-button'
+                        onClick={(e:any) => {this.buttonClicked(kid.id)}}
+                        title={kid.label || kid.developerName}
                     >
-                        {kid.developerName}
-                    </span>
+                        {button}
+                    </div>
+                    
                 );
             }
-            buttons.push(
-                <div
-                    id={kid.id}
-                    className='colcon-expander-button'
-                    onClick={(e:any) => {this.buttonClicked(kid.id)}}
-                    title={kid.label || kid.developerName}
-                >
-                    {button}
-                </div>
-                
-            );
         });
 
         return(
@@ -223,37 +226,63 @@ export default class Collapse extends React.Component<any,any> {
     buildExpandedContent(container: any) {
   
         let buttons: any[] = [];
+        let tabs: any[] = [];
+        //get any non tab page elements
+        let commonElements: any[] = manywho.model.getChildren(this.expanderParentId, this.props.flowKey);
+        let topElements: any[] = [];
+        for(let element of commonElements) {
+            if(!manywho.model.isContainer(element)) {
+                topElements.push(this.buildStandardContent(element, this.props.flowKey));
+            }
+        }
         
         let childContainers: any[] = manywho.model.getChildren(container.id, this.props.flowKey);
         childContainers.forEach((kid: any) => {
-            let button: any;
-            if(kid.attributes?.icon) {
-                button=(
+            if(manywho.model.isContainer(kid)) {
+                
+                let tabClass: string = "colcon-expander-tab";
+                if(this.state.selectedExpander === kid.id) {
+                    tabClass += " colcon-expander-tab-selected";
+                }
+                let tab = (
                     <span
-                        className={"colcon-expander-button-icon glyphicon glyphicon-" + kid.attributes?.icon}
-                    />
-                );
-            }
-            else {
-                button=(
-                    <span
-                        className={"colcon-expander-button-icon"}
+                        className={tabClass}
+                        onClick={(e:any) => {this.buttonClicked(kid.id)}}
                     >
-                        {kid.developerName}
+                        {kid.label || kid.developerName}
                     </span>
                 );
+                tabs.push(tab);
+                /*
+                if(kid.attributes?.icon) {
+                    button=(
+                        <span
+                            className={"colcon-expander-button-icon glyphicon glyphicon-" + kid.attributes?.icon}
+                        />
+                    );
+                }
+                else {
+                    button=(
+                        <span
+                            className={"colcon-expander-button-icon"}
+                        >
+                            {kid.developerName}
+                        </span>
+                    );
+                }
+                buttons.push(
+                    <div
+                        id={kid.id}
+                        onClick={(e:any) => {this.buttonClicked(kid.id)}}
+                        title={kid.label || kid.developerName}
+                        className='colcon-expander-button'
+                    >
+                        {button}
+                    </div>
+                    
+                );
+                */
             }
-            buttons.push(
-                <div
-                    id={kid.id}
-                    onClick={(e:any) => {this.buttonClicked(kid.id)}}
-                    title={kid.label || kid.developerName}
-                    className='colcon-expander-button'
-                >
-                    {button}
-                </div>
-                
-            );
         });
         buttons.unshift(
             <div
@@ -262,7 +291,7 @@ export default class Collapse extends React.Component<any,any> {
                 title={"Close"}
             >
                 <span
-                    className={"colcon-expander-button-icon glyphicon glyphicon-remove"}
+                    className={"colcon-expander-button-icon glyphicon glyphicon-remove-sign"}
                 />
             </div>
             
@@ -273,7 +302,7 @@ export default class Collapse extends React.Component<any,any> {
         };
 
         let cont: any = manywho.model.getContainer(this.state.selectedExpander, this.props.flowKey);
-        let content: any = this.buildStandardContent(cont, this.props.flowkey);
+        let content: any = this.buildStandardContent(cont, this.props.flowkey,true,false);
         
         return(
             <div
@@ -286,10 +315,19 @@ export default class Collapse extends React.Component<any,any> {
                     {buttons}
                 </div>
                 <div
-                    className='colcon-expander-content'
+                    className='colcon-expander-body'
                 >
-                    {cont.label || cont.developerName}
-                    {content}
+                    {topElements}
+                    <div
+                        className='colcon-expander-tabs'
+                    >
+                        {tabs}
+                    </div>
+                    <div
+                        className='colcon-expander-content'
+                    >
+                        {content}
+                    </div>
                 </div>
             </div>
         );
